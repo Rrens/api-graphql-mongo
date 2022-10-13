@@ -13,8 +13,8 @@ function App() {
       </Routes>
       <NavLink to="/books/new">Form</NavLink>
       <NavLink to="/books/">List</NavLink>
-      <List />
-      <Form />
+      {/* <List />
+      <Form /> */}
     </div>
   );
 }
