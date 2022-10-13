@@ -1,10 +1,14 @@
 import React, { Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
+// memanggil gql dan apollo cliet
+import { NEW_BOOK } from "../gql/books";
+import { useMutation } from "@apollo/client";
 
 export default function Form(props) {
   const history = useNavigate();
-  console.log(useNavigate());
-  function onSubmit(event) {
+  // console.log(useNavigate());
+  const [newBook, { loading, error }] = useMutation(NEW_BOOK);
+  async function onSubmit(event) {
     event.preventDefault();
     // console.log(event);
     const payload = {};
@@ -14,7 +18,22 @@ export default function Form(props) {
       // diliat jika nodename === input (berasal dari atribut html input) maka value ditampung di object payload
       if (element.nodeName === "INPUT") payload[element.name] = element.value;
     }
-    console.log(payload);
+
+    try {
+      const resp = await newBook({
+        variables: {
+          ...payload,
+          release_year: Number(payload.release_year),
+        },
+      });
+
+      // if (resp) history("/books");
+      console.log(resp);
+    } catch (error) {
+      console.log(`error di ${error}`);
+    }
+
+    // console.log(payload);
   }
 
   return (
@@ -52,12 +71,8 @@ export default function Form(props) {
         <button type="button" onClick={() => history("/books")}>
           Back
         </button>
-        <button
-          type="submit"
-          style={{ marginLeft: "5px" }}
-          // onClick={() => history("/books")}
-        >
-          Submit
+        <button type="submit" style={{ marginLeft: "5px" }}>
+          Save
         </button>
       </form>
     </Fragment>
