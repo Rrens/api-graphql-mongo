@@ -4,7 +4,9 @@ import { Link } from "react-router-dom";
 import { GET_ALL_BOOKS } from "../gql/books";
 
 export default function List() {
-  const { loading, error, data } = useQuery(GET_ALL_BOOKS);
+  const { loading, error, data } = useQuery(GET_ALL_BOOKS, {
+    fetchPolicy: "no-cache",
+  });
 
   if (loading) {
     return "Loading ...";
