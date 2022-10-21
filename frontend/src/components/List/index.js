@@ -11,7 +11,7 @@ export default function List() {
   if (loading) {
     return "Loading ...";
   }
-  console.log(error);
+  console.log(GET_ALL_BOOKS);
   if (error) {
     return error?.graphQLErrors.map((error) => error) ?? error.networkError;
   }
@@ -34,7 +34,26 @@ export default function List() {
         </Link>
       </h1>
       {data.getAllBooks.map((item) => {
-        return <div key={item._id}>{item.title}</div>;
+        return (
+          <div key={item._id}>
+            {item.title}
+            <Link
+              to={`/books/${item._id}/edit`}
+              style={{ marginLeft: "10px", marginRight: "5px" }}
+            >
+              Edit
+            </Link>
+            <span
+              style={{
+                textDecoration: "underline",
+                cursor: "pointer",
+                color: "red",
+              }}
+            >
+              Delete
+            </span>
+          </div>
+        );
       })}
     </Fragment>
   );

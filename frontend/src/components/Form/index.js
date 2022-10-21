@@ -1,22 +1,39 @@
-import React, { Fragment } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { Fragment, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 // memanggil gql dan apollo cliet
-import { NEW_BOOK } from "../gql/books";
-import { useMutation } from "@apollo/client";
+import { GET_BOOK_DETAIL, NEW_BOOK, UPDATE_BOOK } from "../gql/books";
+import { useLazyQuery, useMutation } from "@apollo/client";
 
 export default function Form(props) {
   const history = useNavigate();
+
+  const params = useParams();
   // console.log(useNavigate());
-  const [newBook, { loading, error }] = useMutation(NEW_BOOK);
+  // console.dir(params);
+  const [newBook, { loading: loadingNewBook, error: errorNewBook }] =
+    useMutation(NEW_BOOK);
+
+  // use Lazy Query untuk update data
+  const [
+    getBookDetail,
+    { loading: loadingBook, error: errorBook, data: dataBook },
+  ] = useLazyQuery(GET_BOOK_DETAIL, {
+    variables: { _id: params.id },
+  });
+
+  // console.log(GET_BOOK_DETAIL);
+
   async function onSubmit(event) {
     event.preventDefault();
-    // console.log(event);
+
     const payload = {};
     for (let index = 0; index < event.target.length; index++) {
       // event.target bisa dilihat di console.log
       const element = event.target[index];
       // diliat jika nodename === input (berasal dari atribut html input) maka value ditampung di object payload
       if (element.nodeName === "INPUT") payload[element.name] = element.value;
+      // console.dir(element);
+      console.log(element.value);
     }
 
     try {
@@ -27,13 +44,39 @@ export default function Form(props) {
         },
       });
       // if (resp) history("/books");
-      console.log(resp);
+      // console.log(resp);
     } catch (error) {
       console.log(`error di ${error}`);
     }
 
     // console.log(payload);
+
+    // ketika params.id ada maka jalankan getbookdetail
   }
+  useEffect(() => {
+    if (params.id) getBookDetail();
+  }, [params.id, getBookDetail]);
+
+  // menangkap state yang berubah
+  // jika ada perubahan di data
+
+  useEffect(() => {
+    if (dataBook) {
+      const form = document.getElementById("form-book");
+
+      for (let index = 0; index < form.length; index++) {
+        const element = form[index];
+
+        // console.dir(element.nodeName);
+
+        // UNTUK databook ambil langsung dari db
+        if (element.nodeName === "INPUT") {
+          element.value = dataBook.getBook[element.name];
+          // console.log(dataBook.getBookDetail);
+        }
+      }
+    }
+  }, [dataBook]);
 
   return (
     <Fragment>
