@@ -1,5 +1,15 @@
 import { gql } from "@apollo/client";
 
+// FUNCTION GET BOOKS
+export const GET_ALL_BOOKS = gql`
+  query GetAllBooks {
+    getAllBooks {
+      _id
+      title
+    }
+  }
+`;
+
 // mutation diawal untuk di front end.
 // sedangkan di object untuk memanggil graphql
 export const NEW_BOOK = gql`
@@ -28,6 +38,7 @@ export const NEW_BOOK = gql`
 `;
 
 const books = {
+  GET_ALL_BOOKS,
   NEW_BOOK,
 };
 

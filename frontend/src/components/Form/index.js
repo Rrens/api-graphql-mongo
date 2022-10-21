@@ -26,7 +26,6 @@ export default function Form(props) {
           release_year: Number(payload.release_year),
         },
       });
-
       // if (resp) history("/books");
       console.log(resp);
     } catch (error) {
