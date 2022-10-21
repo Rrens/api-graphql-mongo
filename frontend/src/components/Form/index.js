@@ -13,6 +13,9 @@ export default function Form(props) {
   const [newBook, { loading: loadingNewBook, error: errorNewBook }] =
     useMutation(NEW_BOOK);
 
+  const [updateBook, { loading: loadingUpdateBook, error: errorUpdateBook }] =
+    useMutation(UPDATE_BOOK);
+
   // use Lazy Query untuk update data
   const [
     getBookDetail,
@@ -36,17 +39,33 @@ export default function Form(props) {
       console.log(element.value);
     }
 
-    try {
-      const resp = await newBook({
-        variables: {
-          ...payload,
-          release_year: Number(payload.release_year),
-        },
-      });
-      // if (resp) history("/books");
-      // console.log(resp);
-    } catch (error) {
-      console.log(`error di ${error}`);
+    if (params.id) {
+      try {
+        const resp = await updateBook({
+          variables: {
+            ...payload,
+            _id: params.id,
+            release_year: Number(payload.release_year),
+          },
+        });
+        // if (resp) history("/books");
+        // console.log(resp);
+      } catch (error) {
+        console.log(`error di ${error}`);
+      }
+    } else {
+      try {
+        const resp = await newBook({
+          variables: {
+            ...payload,
+            release_year: Number(payload.release_year),
+          },
+        });
+        // if (resp) history("/books");
+        // console.log(resp);
+      } catch (error) {
+        console.log(`error di ${error}`);
+      }
     }
 
     // console.log(payload);

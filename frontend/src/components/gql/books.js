@@ -60,7 +60,7 @@ export const UPDATE_BOOK = gql`
     $genre: String!
   ) {
     updateBook(
-      id: $_id
+      _id: $_id
       title: $title
       author: $author
       description: $description
