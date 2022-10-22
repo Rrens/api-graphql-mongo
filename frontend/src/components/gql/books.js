@@ -77,6 +77,12 @@ export const UPDATE_BOOK = gql`
   }
 `;
 
+export const DELETE_BOOK = gql`
+  mutation DeleteBook($_id: ID!) {
+    deleteBook(_id: $_id)
+  }
+`;
+
 const books = {
   GET_ALL_BOOKS,
   GET_BOOK_DETAIL,

@@ -1,17 +1,33 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import { GET_ALL_BOOKS } from "../gql/books";
+import { GET_ALL_BOOKS, DELETE_BOOK } from "../gql/books";
 
 export default function List() {
   const { loading, error, data } = useQuery(GET_ALL_BOOKS, {
     fetchPolicy: "no-cache",
   });
 
+  const [deleteBook, { loading: loadingDelete }] = useMutation(DELETE_BOOK, {
+    refetchQueries: [GET_ALL_BOOKS],
+    onError: (res) => {
+      console.log(res.networkError);
+    },
+  });
+
+  function fnDelete(_id) {
+    deleteBook({
+      variables: {
+        _id,
+      },
+    });
+    console.log(`iki cuy: ${_id}`);
+  }
+
   if (loading) {
     return "Loading ...";
   }
-  console.log(GET_ALL_BOOKS);
+  // console.log(GET_ALL_BOOKS);
   if (error) {
     return error?.graphQLErrors.map((error) => error) ?? error.networkError;
   }
@@ -43,15 +59,19 @@ export default function List() {
             >
               Edit
             </Link>
+            (
             <span
               style={{
                 textDecoration: "underline",
                 cursor: "pointer",
                 color: "red",
               }}
+              onClick={() => fnDelete(item._id)}
+              // onClick={console.log(`dele: ${item._id}`)}
             >
               Delete
             </span>
+            )
           </div>
         );
       })}
