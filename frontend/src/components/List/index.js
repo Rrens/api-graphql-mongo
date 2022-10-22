@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import { GET_ALL_BOOKS, DELETE_BOOK } from "../gql/books";
 
@@ -7,6 +7,8 @@ export default function List() {
   const { loading, error, data } = useQuery(GET_ALL_BOOKS, {
     fetchPolicy: "no-cache",
   });
+
+  const [iD, setId] = useState(null);
 
   const [deleteBook, { loading: loadingDelete }] = useMutation(DELETE_BOOK, {
     refetchQueries: [GET_ALL_BOOKS],
@@ -16,6 +18,7 @@ export default function List() {
   });
 
   function fnDelete(_id) {
+    setId(_id);
     deleteBook({
       variables: {
         _id,
@@ -32,22 +35,38 @@ export default function List() {
     return error?.graphQLErrors.map((error) => error) ?? error.networkError;
   }
 
-  // Check data dari graphQL
-  if (data.getAllBooks === 0)
+  function tidakAdaBuku() {
     return (
       <h1>
         Belum ada buku yang terdaftarkan{" "}
         <Link to={"/books/new"}>Buat baru</Link>
       </h1>
     );
+  }
 
-  return (
-    <Fragment>
+  function adaBuku() {
+    return (
       <h1>
         List Buku
         <Link to="/books/new" style={{ fontSize: 12 }}>
           (+ Buat Baru)
         </Link>
+      </h1>
+    );
+  }
+  // Check data dari graphQL
+  // if (data.getAllBooks === 0) {
+  // }
+
+  console.log(data);
+  return (
+    <Fragment>
+      {data.getAllBooks.length === 0 ? tidakAdaBuku() : adaBuku()}
+      <h1>
+        {/* List Buku
+        <Link to="/books/new" style={{ fontSize: 12 }}>
+          (+ Buat Baru)
+        </Link> */}
       </h1>
       {data.getAllBooks.map((item) => {
         return (
@@ -69,7 +88,7 @@ export default function List() {
               onClick={() => fnDelete(item._id)}
               // onClick={console.log(`dele: ${item._id}`)}
             >
-              Delete
+              {iD === item._id && loadingDelete ? "Deleting..." : "Delete"}
             </span>
             )
           </div>
